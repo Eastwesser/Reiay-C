@@ -1,6 +1,0 @@
-C:\Users\altte\Relay\obj\Debug\net8.0\Relay.csproj.AssemblyReference.cache
-C:\Users\altte\Relay\obj\Debug\net8.0\Relay.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\altte\Relay\obj\Debug\net8.0\Relay.AssemblyInfoInputs.cache
-C:\Users\altte\Relay\obj\Debug\net8.0\Relay.AssemblyInfo.cs
-C:\Users\altte\Relay\obj\Debug\net8.0\Relay.csproj.CoreCompileInputs.cache
-C:\Users\altte\Relay\obj\Debug\net8.0\Relay.MvcApplicationPartsAssemblyInfo.cache
