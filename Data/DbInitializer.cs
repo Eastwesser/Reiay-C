@@ -1,14 +1,19 @@
-public static class DbInitializer
-{
-    public static void Initialize(ApplicationDbContext context)
-    {
-        context.Database.EnsureCreated();
+using Microsoft.EntityFrameworkCore;
+using Relay.Models;
 
-        // Инициализация данных
-        if (!context.Users.Any())
+namespace Relay.Data
+{
+    public static class DbInitializer
+    {
+        public static async Task InitializeAsync(ApplicationDbContext context)
         {
-            context.Users.Add(new User { Username = "admin", Password = "password" });
-            context.SaveChanges();
+            await context.Database.EnsureCreatedAsync();
+
+            if (!await context.Users.AnyAsync())
+            {
+                await context.Users.AddAsync(new User { Username = "admin", Password = "password" });
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

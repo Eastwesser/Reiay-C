@@ -1,22 +1,34 @@
 using Relay.Models;
+using Relay.DTOs;
 
-public interface IMessageService
+namespace Relay.Services
 {
-    Message GetMessage(int id);
-    Message CreateMessage(MessageCreateDto messageDto);
-}
-
-public class MessageService : IMessageService
-{
-    public Message GetMessage(int id)
+    public interface IMessageService
     {
-        // Логика получения сообщения
-        return new Message { Id = id, Content = "Пример сообщения", Timestamp = DateTime.Now };
+        Task<Message> GetMessageAsync(int id); // Измените метод на асинхронный
+        Task<Message> CreateMessageAsync(MessageCreateDto messageDto); // Измените метод на асинхронный
     }
 
-    public Message CreateMessage(MessageCreateDto messageDto)
+    public class MessageService : IMessageService
     {
-        // Логика создания сообщения
-        return new Message { Content = messageDto.Content, Timestamp = DateTime.Now, UserId = messageDto.UserId };
+        private readonly ApplicationDbContext _context;
+
+        public MessageService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<Message> GetMessageAsync(int id)
+        {
+            return await _context.Messages.FindAsync(id);
+        }
+
+        public async Task<Message> CreateMessageAsync(MessageCreateDto messageDto)
+        {
+            var message = new Message { Content = messageDto.Content, UserId = messageDto.UserId, Timestamp = DateTime.Now };
+            await _context.Messages.AddAsync(message);
+            await _context.SaveChangesAsync();
+            return message;
+        }
     }
 }

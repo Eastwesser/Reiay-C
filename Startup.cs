@@ -1,55 +1,61 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using Relay.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Relay.Services;
+using Relay.Data;  // Добавьте для подключения ApplicationDbContext
+using Microsoft.Extensions.DependencyInjection;
 
 public class Startup
 {
+    public IConfiguration Configuration { get; }
+
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
     }
 
-    public IConfiguration Configuration { get; }
-
-    // Метод настройки сервисов
     public void ConfigureServices(IServiceCollection services)
     {
-        // Настройка подключения к базе данных
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    ValidAudience = Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                };
+            });
+
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-        // Добавление зависимостей сервисов
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IMessageService, MessageService>();
         services.AddScoped<IRoleService, RoleService>();
 
-        // Добавление контроллеров
         services.AddControllers();
-
-        // Настройка Swagger/OpenAPI
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(c =>
-        {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Relay API", Version = "v1" });
-        });
+        services.AddSwaggerGen();
     }
 
-    // Метод настройки конвейера обработки запросов
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        // Если приложение в режиме разработки, подключаем Swagger UI
         if (env.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Relay API v1"));
+            app.UseSwaggerUI();
         }
 
         app.UseHttpsRedirection();
         app.UseRouting();
+
+        app.UseAuthentication();
         app.UseAuthorization();
 
-        // Подключение конечных точек
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();

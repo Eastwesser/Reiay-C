@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Relay.Services;
 using Relay.Models;
+using Relay.DTOs;  // Добавьте это пространство имён для доступа к RoleCreateDto
 
 [ApiController]
 [Route("api/[controller]")]
@@ -16,7 +17,7 @@ public class RolesController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult GetRole(int id)
     {
-        var role = _roleService.GetRole(id);
+        var role = _roleService.GetRoleAsync(id);
         if (role == null) return NotFound();
         return Ok(role);
     }
@@ -24,7 +25,7 @@ public class RolesController : ControllerBase
     [HttpPost]
     public IActionResult CreateRole(RoleCreateDto roleDto)
     {
-        var role = _roleService.CreateRole(roleDto);
+        var role = _roleService.CreateRoleAsync(roleDto);
         return CreatedAtAction(nameof(GetRole), new { id = role.Id }, role);
     }
 }

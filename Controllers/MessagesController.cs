@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Relay.Services;
 using Relay.Models;
+using Relay.DTOs;  // Добавьте это пространство имён для доступа к MessageCreateDto
 
 [ApiController]
 [Route("api/[controller]")]

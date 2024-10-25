@@ -1,5 +1,8 @@
-public class Role
+namespace Relay.Models
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
+    public class Role
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }
