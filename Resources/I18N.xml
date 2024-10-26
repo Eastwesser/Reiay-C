@@ -2,7 +2,102 @@
 <I18N>
   <Entry>
     <Key>Welcome</Key>
-    <Value lang="ru">Привет</Value>
-    <Value lang="en">Hello</Value>
+    <Value lang="ru">Добро пожаловать</Value>
+    <Value lang="en">Welcome</Value>
+  </Entry>
+  <Entry>
+    <Key>Chat</Key>
+    <Value lang="ru">Чат</Value>
+    <Value lang="en">Chat</Value>
+  </Entry>
+  <Entry>
+    <Key>Send</Key>
+    <Value lang="ru">Отправить</Value>
+    <Value lang="en">Send</Value>
+  </Entry>
+  <Entry>
+    <Key>Settings</Key>
+    <Value lang="ru">Настройки</Value>
+    <Value lang="en">Settings</Value>
+  </Entry>
+  <Entry>
+    <Key>Login</Key>
+    <Value lang="ru">Войти</Value>
+    <Value lang="en">Login</Value>
+  </Entry>
+  <Entry>
+    <Key>Logout</Key>
+    <Value lang="ru">Выйти</Value>
+    <Value lang="en">Logout</Value>
+  </Entry>
+  <Entry>
+    <Key>Username</Key>
+    <Value lang="ru">Имя пользователя</Value>
+    <Value lang="en">Username</Value>
+  </Entry>
+  <Entry>
+    <Key>Password</Key>
+    <Value lang="ru">Пароль</Value>
+    <Value lang="en">Password</Value>
+  </Entry>
+  <Entry>
+    <Key>DirectMessages</Key>
+    <Value lang="ru">Личные сообщения</Value>
+    <Value lang="en">Direct Messages</Value>
+  </Entry>
+  <Entry>
+    <Key>Server</Key>
+    <Value lang="ru">Сервер</Value>
+    <Value lang="en">Server</Value>
+  </Entry>
+  <Entry>
+    <Key>Channels</Key>
+    <Value lang="ru">Каналы</Value>
+    <Value lang="en">Channels</Value>
+  </Entry>
+  <Entry>
+    <Key>Friends</Key>
+    <Value lang="ru">Друзья</Value>
+    <Value lang="en">Friends</Value>
+  </Entry>
+  <Entry>
+    <Key>Notifications</Key>
+    <Value lang="ru">Уведомления</Value>
+    <Value lang="en">Notifications</Value>
+  </Entry>
+  <Entry>
+    <Key>Mute</Key>
+    <Value lang="ru">Отключить звук</Value>
+    <Value lang="en">Mute</Value>
+  </Entry>
+  <Entry>
+    <Key>Unmute</Key>
+    <Value lang="ru">Включить звук</Value>
+    <Value lang="en">Unmute</Value>
+  </Entry>
+  <Entry>
+    <Key>CreateChannel</Key>
+    <Value lang="ru">Создать канал</Value>
+    <Value lang="en">Create Channel</Value>
+  </Entry>
+  <Entry>
+    <Key>Delete</Key>
+    <Value lang="ru">Удалить</Value>
+    <Value lang="en">Delete</Value>
+  </Entry>
+  <Entry>
+    <Key>Edit</Key>
+    <Value lang="ru">Редактировать</Value>
+    <Value lang="en">Edit</Value>
+  </Entry>
+  <Entry>
+    <Key>Profile</Key>
+    <Value lang="ru">Профиль</Value>
+    <Value lang="en">Profile</Value>
+  </Entry>
+  <Entry>
+    <Key>VoiceChannel</Key>
+    <Value lang="ru">Голосовой канал</Value>
+    <Value lang="en">Voice Channel</Value>
   </Entry>
 </I18N>
