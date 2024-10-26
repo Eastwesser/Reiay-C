@@ -17,7 +17,12 @@ namespace Relay.Services
 
         public async Task<Message> GetMessageAsync(int id)
         {
-            return await _context.Messages.FindAsync(id);
+            var message = await _context.Messages.FindAsync(id);
+            if (message == null)
+            {
+                throw new InvalidOperationException("Message not found.");
+            }
+            return message;
         }
 
         public async Task<Message> CreateMessageAsync(MessageCreateDto messageDto)

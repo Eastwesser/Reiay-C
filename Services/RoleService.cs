@@ -16,7 +16,12 @@ namespace Relay.Services
 
         public async Task<Role> GetRoleAsync(int id)
         {
-            return await _context.Roles.FindAsync(id);
+            var role = await _context.Roles.FindAsync(id);
+            if (role == null)
+            {
+                throw new InvalidOperationException("Role not found.");
+            }
+            return role;
         }
 
         public async Task<Role> CreateRoleAsync(RoleCreateDto roleDto)
