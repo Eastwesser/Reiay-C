@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<I18N>
+  <Entry>
+    <Key>Welcome</Key>
+    <Value lang="ru">Привет</Value>
+    <Value lang="en">Hello</Value>
+  </Entry>
+</I18N>

@@ -1,6 +1,6 @@
-using Relay.DTOs;
-using Relay.Models;
 using System.Threading.Tasks;
+using Relay.Models;
+using Relay.DTOs;
 
 namespace Relay.Services
 {

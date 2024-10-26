@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Relay.Services;
-using Relay.Models;
-using Relay.DTOs;  // Добавьте это пространство имён для доступа к MessageCreateDto
+using Relay.DTOs;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -15,17 +14,17 @@ public class MessagesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetMessage(int id)
+    public async Task<IActionResult> GetMessage(int id)
     {
-        var message = _messageService.GetMessage(id);
+        var message = await _messageService.GetMessageAsync(id);
         if (message == null) return NotFound();
         return Ok(message);
     }
 
     [HttpPost]
-    public IActionResult CreateMessage(MessageCreateDto messageDto)
+    public async Task<IActionResult> CreateMessage([FromBody] MessageCreateDto messageDto)
     {
-        var message = _messageService.CreateMessage(messageDto);
+        var message = await _messageService.CreateMessageAsync(messageDto);
         return CreatedAtAction(nameof(GetMessage), new { id = message.Id }, message);
     }
 }

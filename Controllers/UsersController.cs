@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Relay.Services;
-using Relay.Models;
-using Relay.DTOs;  // Добавьте это пространство имён для доступа к UserCreateDto
+using Relay.DTOs;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -18,7 +17,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(UserCreateDto userDto)
+    public async Task<IActionResult> Register([FromBody] UserCreateDto userDto)
     {
         _logger.LogInformation("Registering new user.");
         var user = await _userService.RegisterAsync(userDto);

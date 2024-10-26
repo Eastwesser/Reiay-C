@@ -1,6 +1,6 @@
 namespace Relay.Models
 {
-    public class Role
+    public class PrivateServer
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;

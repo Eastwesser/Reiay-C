@@ -50,6 +50,8 @@ public class Startup
             app.UseSwaggerUI();
         }
 
+        app.UseMiddleware<LocalizationMiddleware>(); // Поддержка локализации
+
         app.UseHttpsRedirection();
         app.UseRouting();
 

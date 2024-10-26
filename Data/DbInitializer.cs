@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Relay.Models;
 
@@ -7,7 +8,7 @@ namespace Relay.Data
     {
         public static async Task InitializeAsync(ApplicationDbContext context)
         {
-            await context.Database.EnsureCreatedAsync();
+            await context.Database.MigrateAsync();
 
             if (!await context.Users.AnyAsync())
             {
