@@ -16,7 +16,7 @@ namespace Relay.Services
 
         public async Task<User> RegisterAsync(UserCreateDto userDto)
         {
-            var user = new User { Username = userDto.Username, Password = userDto.Password };
+            var user = new User { Username = userDto.Username!, Password = userDto.Password! };
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             return user;
