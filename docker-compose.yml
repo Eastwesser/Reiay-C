@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: relayuser
+      POSTGRES_PASSWORD: relaypassword
+      POSTGRES_DB: relaydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - relaynetwork
+
+  app:
+    build: .
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;Database=relaydb;Username=relayuser;Password=relaypassword"
+    depends_on:
+      - db
+    ports:
+      - "5119:80"
+    networks:
+      - relaynetwork
+
+volumes:
+  postgres_data:
+
+networks:
+  relaynetwork:
