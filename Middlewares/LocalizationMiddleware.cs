@@ -6,45 +6,29 @@ using Microsoft.Extensions.Logging;
 public class LocalizationMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly RequestCultureProvider _requestCultureProvider;
     private readonly ILogger<LocalizationMiddleware> _logger;
 
-    public LocalizationMiddleware(RequestDelegate next, ILogger<LocalizationMiddleware> logger)
+    public LocalizationMiddleware(
+        RequestDelegate next,
+        RequestCultureProvider requestCultureProvider,
+        ILogger<LocalizationMiddleware> logger
+        )
     {
         _next = next;
+        _requestCultureProvider = requestCultureProvider;
         _logger = logger;
     }
 
-    /// <summary>
-    /// Установка языка по запросу (по умолчанию "ru").
-    /// </summary>
     public async Task InvokeAsync(HttpContext context)
     {
-        var cultureQuery = context.Request.Query["lang"].ToString();
-        var culture = !string.IsNullOrEmpty(cultureQuery) && IsValidCulture(cultureQuery)
-            ? cultureQuery
-            : "ru";
+        // Определяем culture пользователя с помощью RequestCultureProvider
+        var culture = _requestCultureProvider.DetermineRequestCulture(context);
+        context.Items["RequestCulture"] = culture;
 
-        CultureInfo.CurrentCulture = new CultureInfo(culture);
-        CultureInfo.CurrentUICulture = new CultureInfo(culture);
+        _logger.LogInformation("Культура запроса установлена: {Culture}", culture.Name);
 
-        _logger.LogInformation("Установлен язык: {Culture}", culture);
-
+        // Передача управления следующему middleware
         await _next(context);
-    }
-
-    /// <summary>
-    /// Проверка доступности языка.
-    /// </summary>
-    private bool IsValidCulture(string culture)
-    {
-        try
-        {
-            _ = new CultureInfo(culture);
-            return true;
-        }
-        catch (CultureNotFoundException)
-        {
-            return false;
-        }
     }
 }

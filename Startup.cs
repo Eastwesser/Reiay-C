@@ -16,12 +16,9 @@ public class Startup
         Configuration = configuration;
     }
 
-    /// <summary>
-    /// Конфигурация служб приложения, включая JWT-аутентификацию, базы данных и зависимости.
-    /// </summary>
     public void ConfigureServices(IServiceCollection services)
     {
-        // Настройка JWT-аутентификации
+        // JWT-аутентификация
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -51,36 +48,31 @@ public class Startup
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IMessageService, MessageService>();
         services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<RequestCultureProvider>();
 
-        // Добавление контроллеров и Swagger
+        // Контроллеры и Swagger
         services.AddControllers();
         services.AddSwaggerGen();
     }
 
-    /// <summary>
-    /// Конфигурация пайплайна обработки запросов, включая маршрутизацию, авторизацию и локализацию.
-    /// </summary>
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
         {
-            // Включение Swagger для документирования API в режиме разработки
             app.UseSwagger();
             app.UseSwaggerUI();
         }
 
-        // Включение Middleware для локализации
         app.UseMiddleware<LocalizationMiddleware>();
-
         app.UseHttpsRedirection();
         app.UseRouting();
 
-        app.UseAuthentication(); // Включение аутентификации
-        app.UseAuthorization();  // Включение авторизации
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers(); // Маршрутизация для контроллеров
+            endpoints.MapControllers();
         });
     }
 }

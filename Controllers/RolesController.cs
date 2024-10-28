@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Relay.Services;
 using Relay.DTOs;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -16,29 +17,27 @@ public class RolesController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>
-    /// Получение роли по ID.
-    /// </summary>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetRole(int id)
     {
-        _logger.LogInformation("Получение роли ID {RoleId}", id);
+        var culture = HttpContext.Items["RequestCulture"] as CultureInfo ?? new CultureInfo("ru");
+        _logger.LogInformation("Получение роли на языке: {Culture}", culture.Name);
+
         var role = await _roleService.GetRoleAsync(id);
         if (role == null)
         {
-            _logger.LogWarning("Роль ID {RoleId} не найдена", id);
+            _logger.LogWarning("Роль с ID {RoleId} не найдена", id);
             return NotFound();
         }
         return Ok(role);
     }
 
-    /// <summary>
-    /// Создание новой роли.
-    /// </summary>
     [HttpPost]
     public async Task<IActionResult> CreateRole([FromBody] RoleCreateDto roleDto)
     {
-        _logger.LogInformation("Создание новой роли с именем {RoleName}", roleDto.Name);
+        var culture = HttpContext.Items["RequestCulture"] as CultureInfo ?? new CultureInfo("ru");
+        _logger.LogInformation("Создание роли '{RoleName}' на языке {Culture}", roleDto.Name, culture.Name);
+
         var role = await _roleService.CreateRoleAsync(roleDto);
         return CreatedAtAction(nameof(GetRole), new { id = role.Id }, role);
     }
