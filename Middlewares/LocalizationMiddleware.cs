@@ -15,7 +15,7 @@ public class LocalizationMiddleware
     }
 
     /// <summary>
-    /// Установка языка по запросу или стандартному значению "ru".
+    /// Установка языка по запросу (по умолчанию "ru").
     /// </summary>
     public async Task InvokeAsync(HttpContext context)
     {
@@ -27,7 +27,7 @@ public class LocalizationMiddleware
         CultureInfo.CurrentCulture = new CultureInfo(culture);
         CultureInfo.CurrentUICulture = new CultureInfo(culture);
 
-        _logger.LogInformation("Установлена культура: {Culture}", culture);
+        _logger.LogInformation("Установлен язык: {Culture}", culture);
 
         await _next(context);
     }

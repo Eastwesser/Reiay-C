@@ -25,17 +25,17 @@ namespace Relay.Data
             // Проверка, существует ли хотя бы один пользователь в базе данных
             if (!await context.Users.AnyAsync())
             {
-                logger.LogInformation("Создание начального пользователя администратора...");
+                logger.LogInformation("Создание начального пользователя - 'администратора'...");
 
-                // Добавление пользователя администратора по умолчанию
+                // Добавление пользователя 'администратора' по умолчанию
                 await context.Users.AddAsync(new User { Username = "admin", Password = "password" });
                 await context.SaveChangesAsync();
 
-                logger.LogInformation("Пользователь администратор успешно создан.");
+                logger.LogInformation("Пользователь 'администратор' успешно создан.");
             }
             else
             {
-                logger.LogInformation("База данных уже инициализирована, администратор не требуется.");
+                logger.LogInformation("База данных уже инициализирована, 'администратор' не требуется.");
             }
 
             logger.LogInformation("Инициализация базы данных завершена.");

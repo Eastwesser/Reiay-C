@@ -22,11 +22,11 @@ namespace Relay.Services
         /// </summary>
         public async Task<User> RegisterAsync(UserCreateDto userDto)
         {
-            _logger.LogInformation("Регистрация нового пользователя именем {Username}", userDto.Username);
+            _logger.LogInformation("Регистрация нового пользователя с именем {Username}", userDto.Username);
             var user = new User { Username = userDto.Username!, Password = userDto.Password! };
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
-            _logger.LogInformation("Пользователь зарегистрирован ID {UserId}", user.Id);
+            _logger.LogInformation("Пользователь зарегистрирован, ID {UserId}", user.Id);
             return user;
         }
     }

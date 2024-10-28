@@ -1,4 +1,3 @@
-// IMessageService.cs
 using Relay.DTOs;
 using Relay.Models;
 using System.Threading.Tasks;
