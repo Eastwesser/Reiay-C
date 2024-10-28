@@ -41,4 +41,13 @@ public class ApplicationDbContext : DbContext
     /// Таблица приватных серверов.
     /// </summary>
     public DbSet<PrivateServer> PrivateServers { get; set; }
+
+    public DbSet<Chat> Chats { get; set; }
+    public DbSet<Channel> Channels { get; set; }
+
+    public DbSet<MessageInChannel> MessageInChannels { get; set; }
+
+    public DbSet<Attachment> Attachments { get; set; }
+    public DbSet<Permission> Permissions { get; set; }
+
 }

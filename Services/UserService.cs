@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Relay.Models;
 using Relay.DTOs;
 using Relay.Data;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace Relay.Services
 {
@@ -28,6 +30,37 @@ namespace Relay.Services
             await _context.SaveChangesAsync();
             _logger.LogInformation("Пользователь зарегистрирован, ID {UserId}", user.Id);
             return user;
+        }
+
+        /// <summary>
+        /// Получение пользователя по ID.
+        /// </summary>
+        public async Task<User?> GetUserAsync(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"Пользователь с ID {id} не найден.");
+            }
+            return user;
+        }
+
+        /// <summary>
+        /// Создание нового пользователя.
+        /// </summary>
+        public async Task<User> CreateUserAsync(User user)
+        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
+
+        /// <summary>
+        /// Получение всех пользователей.
+        /// </summary>
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        {
+            return await _context.Users.ToListAsync();
         }
     }
 }

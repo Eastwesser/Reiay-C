@@ -49,6 +49,11 @@ public class Startup
         services.AddScoped<IMessageService, MessageService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<RequestCultureProvider>();
+        services.AddScoped<IChatService, ChatService>();
+        services.AddScoped<IChannelService, ChannelService>();
+        services.AddScoped<IAttachmentService, AttachmentService>();
+        services.AddScoped<IMessageInChannelService, MessageInChannelService>();
+        services.AddScoped<IPermissionService, PermissionService>();
 
         // Контроллеры и Swagger
         services.AddControllers();

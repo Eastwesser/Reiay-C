@@ -15,22 +15,18 @@ public class RequestCultureProvider
     {
         var cultureHeader = context.Request.Headers["Accept-Language"].ToString();
         var cultureName = cultureHeader?.Split(',')[0].Trim() ?? "ru"; // Основной язык в случае отсутствия заголовка
-        CultureInfo culture;
 
         // Проверка корректности culture
         if (IsValidCulture(cultureName))
         {
-            culture = new CultureInfo(cultureName);
-            _logger.LogInformation("Язык, указанный в запросе: {Culture}", culture.Name);
-        }
-        else
-        {
-            culture = new CultureInfo("ru");
-            _logger.LogWarning("Неверный код языка в запросе: {Culture}. Установлен 'ru'", cultureName);
+            _logger.LogInformation("Язык, указанный в запросе: {Culture}", cultureName);
+            return new CultureInfo(cultureName);
         }
 
-        return culture;
+        _logger.LogWarning("Неверный код языка в запросе: {Culture}. Установлен 'ru'", cultureName);
+        return new CultureInfo("ru");
     }
+
 
     private bool IsValidCulture(string cultureName)
     {
