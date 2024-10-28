@@ -6,6 +6,6 @@ namespace Relay.Services
 {
     public interface IUserService
     {
-        Task<User> RegisterAsync(UserCreateDto userDto);
+        Task<User> RegisterAsync(UserCreateDto userDto); // Регистрация нового пользователя
     }
 }

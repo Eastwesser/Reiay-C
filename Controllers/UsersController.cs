@@ -16,10 +16,13 @@ public class UsersController : ControllerBase
         _logger = logger;
     }
 
+    /// <summary>
+    /// Регистрация нового пользователя.
+    /// </summary>
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserCreateDto userDto)
     {
-        _logger.LogInformation("Registering new user.");
+        _logger.LogInformation("Регистрация нового пользователя с именем {Username}", userDto.Username);
         var user = await _userService.RegisterAsync(userDto);
         return Ok(user);
     }

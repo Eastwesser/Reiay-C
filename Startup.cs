@@ -16,15 +16,19 @@ public class Startup
         Configuration = configuration;
     }
 
+    /// <summary>
+    /// Конфигурация служб приложения, включая JWT-аутентификацию, базы данных и зависимости.
+    /// </summary>
     public void ConfigureServices(IServiceCollection services)
     {
+        // Настройка JWT-аутентификации
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
                 var key = Configuration["Jwt:Key"];
                 if (string.IsNullOrEmpty(key))
                 {
-                    throw new InvalidOperationException("JWT Key is missing in configuration.");
+                    throw new InvalidOperationException("JWT Key отсутствует в конфигурации.");
                 }
 
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -39,36 +43,44 @@ public class Startup
                 };
             });
 
+        // Настройка подключения к базе данных PostgreSQL
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
+        // Регистрация сервисов приложения
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IMessageService, MessageService>();
         services.AddScoped<IRoleService, RoleService>();
 
+        // Добавление контроллеров и Swagger
         services.AddControllers();
         services.AddSwaggerGen();
     }
 
+    /// <summary>
+    /// Конфигурация пайплайна обработки запросов, включая маршрутизацию, авторизацию и локализацию.
+    /// </summary>
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
         {
+            // Включение Swagger для документирования API в режиме разработки
             app.UseSwagger();
             app.UseSwaggerUI();
         }
 
-        app.UseMiddleware<LocalizationMiddleware>(); // Поддержка локализации
+        // Включение Middleware для локализации
+        app.UseMiddleware<LocalizationMiddleware>();
 
         app.UseHttpsRedirection();
         app.UseRouting();
 
-        app.UseAuthentication();
-        app.UseAuthorization();
+        app.UseAuthentication(); // Включение аутентификации
+        app.UseAuthorization();  // Включение авторизации
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers();
+            endpoints.MapControllers(); // Маршрутизация для контроллеров
         });
     }
 }

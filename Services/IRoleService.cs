@@ -6,7 +6,7 @@ namespace Relay.Services
 {
     public interface IRoleService
     {
-        Task<Role> GetRoleAsync(int id);
-        Task<Role> CreateRoleAsync(RoleCreateDto roleDto);
+        Task<Role> GetRoleAsync(int id); // Получение роли по ID
+        Task<Role> CreateRoleAsync(RoleCreateDto roleDto); // Создание новой роли
     }
 }
