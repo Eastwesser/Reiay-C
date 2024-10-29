@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Relay.Services;
 using Relay.DTOs;
+using Relay.Models;
 using Microsoft.Extensions.Logging;
 using System.Globalization;
+using System.Threading.Tasks;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -24,21 +26,14 @@ public class MessagesController : ControllerBase
         _logger.LogInformation("Получение сообщения на языке: {Culture}", culture.Name);
 
         var message = await _messageService.GetMessageAsync(id);
-        if (message == null)
-        {
-            _logger.LogWarning("Сообщение с ID {MessageId} не найдено", id);
-            return NotFound();
-        }
-        return Ok(message);
+        return message == null ? NotFound() : Ok(message);
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateMessage([FromBody] MessageCreateDto messageDto)
     {
-        var culture = HttpContext.Items["RequestCulture"] as CultureInfo ?? new CultureInfo("ru");
-        _logger.LogInformation("Создание сообщения для пользователя ID {UserId} на языке {Culture}", messageDto.UserId, culture.Name);
+        var createdMessage = await _messageService.CreateMessageAsync(messageDto);
 
-        var message = await _messageService.CreateMessageAsync(messageDto);
-        return CreatedAtAction(nameof(GetMessage), new { id = message.Id }, message);
+        return CreatedAtAction(nameof(GetMessage), new { id = createdMessage.Id }, createdMessage);
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Relay.Services;
+using Relay.DTOs;
 using Relay.Models;
 using System.Threading.Tasks;
 
@@ -22,8 +23,14 @@ public class PermissionController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePermission([FromBody] Permission permission)
+    public async Task<IActionResult> CreatePermission([FromBody] PermissionCreateDto permissionDto)
     {
+        var permission = new Permission
+        {
+            Name = permissionDto.Name,
+            Description = permissionDto.Description
+        };
+
         var createdPermission = await _permissionService.CreatePermissionAsync(permission);
         return CreatedAtAction(nameof(GetPermission), new { id = createdPermission.Id }, createdPermission);
     }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Relay.Services;
+using Relay.DTOs;
 using Relay.Models;
 using System.Threading.Tasks;
 
@@ -22,8 +23,14 @@ public class ChatController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateChat([FromBody] Chat chat)
+    public async Task<IActionResult> CreateChat([FromBody] ChatCreateDto chatDto)
     {
+        var chat = new Chat
+        {
+            Name = chatDto.Title,
+            Members = chatDto.MemberIds.Select(id => new User { Id = id }).ToList()
+        };
+
         var createdChat = await _chatService.CreateChatAsync(chat);
         return CreatedAtAction(nameof(GetChat), new { id = createdChat.Id }, createdChat);
     }

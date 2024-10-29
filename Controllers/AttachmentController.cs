@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Relay.Services;
+using Relay.DTOs;
 using Relay.Models;
 using System.Threading.Tasks;
 
@@ -22,8 +23,15 @@ public class AttachmentController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAttachment([FromBody] Attachment attachment)
+    public async Task<IActionResult> CreateAttachment([FromBody] AttachmentCreateDto attachmentDto)
     {
+        var attachment = new Attachment
+        {
+            FileName = attachmentDto.FileName,
+            FileType = attachmentDto.FileType,
+            MessageId = attachmentDto.MessageId
+        };
+
         var createdAttachment = await _attachmentService.CreateAttachmentAsync(attachment);
         return CreatedAtAction(nameof(GetAttachment), new { id = createdAttachment.Id }, createdAttachment);
     }

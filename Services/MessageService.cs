@@ -1,8 +1,8 @@
+using Relay.Models;
 using System;
 using System.Threading.Tasks;
 using Relay.Data;
 using Relay.DTOs;
-using Relay.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Relay.Services

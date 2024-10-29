@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Relay.Services;
+using Relay.DTOs;
 using Relay.Models;
 using System.Threading.Tasks;
 
@@ -22,8 +23,15 @@ public class MessageInChannelController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateMessageInChannel([FromBody] MessageInChannel message)
+    public async Task<IActionResult> CreateMessageInChannel([FromBody] MessageInChannelCreateDto messageDto)
     {
+        var message = new MessageInChannel
+        {
+            ChannelId = messageDto.ChannelId,
+            Content = messageDto.Content,
+            UserId = messageDto.UserId
+        };
+
         var createdMessage = await _messageInChannelService.CreateMessageInChannelAsync(message);
         return CreatedAtAction(nameof(GetMessageInChannel), new { id = createdMessage.Id }, createdMessage);
     }
