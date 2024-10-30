@@ -100,3 +100,12 @@ docker-compose up -d
 ```bash
 docker-compose down
 ```
+
+5. Полный список команд:
+
+```bash
+dotnet clean
+dotnet restore
+dotnet test
+dotnet build
+```
