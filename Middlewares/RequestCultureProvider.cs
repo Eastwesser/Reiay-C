@@ -39,12 +39,14 @@ namespace Relay.Middlewares
         {
             try
             {
-                _ = new CultureInfo(cultureName); // Пытаемся создать объект CultureInfo для указанной культуры
+                // Пытаемся создать объект CultureInfo для указанной культуры
+                _ = new CultureInfo(cultureName);
                 return true; // Если успешно, возвращаем true
             }
             catch (CultureNotFoundException)
             {
-                return false; // Если возникло исключение, возвращаем false
+                // Если возникло исключение, возвращаем false
+                return false;
             }
         }
     }
