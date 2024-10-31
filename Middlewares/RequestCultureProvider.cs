@@ -20,18 +20,37 @@ namespace Relay.Middlewares
         {
             // Получаем значение заголовка Accept-Language из запроса
             var cultureHeader = context.Request.Headers["Accept-Language"].ToString();
-            // Извлекаем первую культуру из заголовка или устанавливаем 'ru' по умолчанию
-            var cultureName = cultureHeader?.Split(',')[0].Trim() ?? "ru";
 
-            // Проверяем, является ли полученная культура допустимой
-            if (IsValidCulture(cultureName))
+            // Если заголовок не указан, возвращаем культуру по умолчанию ("ru")
+            if (string.IsNullOrEmpty(cultureHeader))
             {
-                _logger.LogInformation("Язык, указанный в запросе: {Culture}", cultureName); // Логируем информацию о выбранной культуре
-                return new CultureInfo(cultureName); // Возвращаем объект CultureInfo для указанной культуры
+                _logger.LogInformation("Заголовок 'Accept-Language' не найден. Установлена культура по умолчанию: 'ru'.");
+                return new CultureInfo("ru");
             }
 
-            _logger.LogWarning("Неверный код языка в запросе: {Culture}. Установлен 'ru'", cultureName); // Логируем предупреждение о неверной культуре
-            return new CultureInfo("ru"); // Возвращаем объект CultureInfo для культуры 'ru' по умолчанию
+            // Разделяем заголовок по запятым и удаляем лишние пробелы
+            var cultures = cultureHeader.Split(',')
+                                        .Select(c => c.Trim())
+                                        .ToList();
+
+            // Если "ru" присутствует в предпочтениях, выбираем её
+            if (cultures.Contains("ru-RU") || cultures.Contains("ru"))
+            {
+                _logger.LogInformation("Приоритетная культура выбрана: 'ru'.");
+                return new CultureInfo("ru");
+            }
+
+            // Берём первую указанную культуру, если она не null и допустима
+            var primaryCulture = cultures.FirstOrDefault();
+            if (primaryCulture != null && IsValidCulture(primaryCulture))
+            {
+                _logger.LogInformation("Язык, указанный в запросе: {Culture}", primaryCulture);
+                return new CultureInfo(primaryCulture);
+            }
+
+            // Если первая культура недопустима, возвращаем культуру по умолчанию "ru"
+            _logger.LogWarning("Неверный код языка в запросе: {Culture}. Установлена 'ru'", primaryCulture);
+            return new CultureInfo("ru");
         }
 
         // Метод для проверки, является ли культура допустимой
