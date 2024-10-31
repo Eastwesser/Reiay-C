@@ -13,47 +13,49 @@ using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Logging configuration
+// Настройка логирования
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-// Configure PostgreSQL database connection
+// Настройка подключения к базе данных PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// JWT Authentication configuration
+// Настройка аутентификации с использованием JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        // Извлекаем ключ JWT из конфигурации
         var key = builder.Configuration["Jwt:Key"];
         if (string.IsNullOrEmpty(key))
         {
             throw new InvalidOperationException("JWT Key отсутствует в конфигурации.");
         }
 
+        // Настройка параметров проверки токенов
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+            ValidateIssuer = true, // Проверка издателя
+            ValidateAudience = true, // Проверка аудитории
+            ValidateLifetime = true, // Проверка срока действия токена
+            ValidateIssuerSigningKey = true, // Проверка ключа подписи токена
+            ValidIssuer = builder.Configuration["Jwt:Issuer"], // Указание допустимого издателя
+            ValidAudience = builder.Configuration["Jwt:Audience"], // Указание допустимой аудитории
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)) // Ключ подписи
         };
     });
 
-// Register application services
+// Регистрация сервисов приложения
 builder.Services.AddScoped<IUserService, UserService>();
-// (Add other services here)
+// (Добавьте другие сервисы здесь)
 
-// Add controllers and Swagger
+// Добавление контроллеров и Swagger для документации API
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Database initialization
+// Инициализация базы данных при запуске приложения
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -61,18 +63,18 @@ using (var scope = app.Services.CreateScope())
     await DbInitializer.InitializeAsync(dbContext, logger);
 }
 
-// Middleware and routing configuration
+// Настройка промежуточного ПО (middleware) и маршрутизации
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger(); // Подключение Swagger в режиме разработки
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<LocalizationMiddleware>();
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
+app.UseMiddleware<LocalizationMiddleware>(); // Промежуточное ПО для локализации
+app.UseHttpsRedirection(); // Перенаправление HTTP на HTTPS
+app.UseRouting(); // Настройка маршрутизации запросов
+app.UseAuthentication(); // Подключение аутентификации
+app.UseAuthorization(); // Подключение авторизации
+app.MapControllers(); // Маршрутизация к контроллерам
 
-app.Run();
+app.Run(); // Запуск приложения
