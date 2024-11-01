@@ -31,6 +31,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             throw new InvalidOperationException("JWT Key отсутствует в конфигурации.");
         }
+        else
+        {
+            Console.WriteLine($"JWT Key: {key}"); // Логируем значение ключа для отладки
+        }
 
         // Настройка параметров проверки токенов
         options.TokenValidationParameters = new TokenValidationParameters

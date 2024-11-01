@@ -4,27 +4,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Relay.Middlewares
 {
-    public class CultureMiddleware
-    {
-        private readonly RequestDelegate _next;
-        private readonly RequestCultureProvider _cultureProvider;
-
-        public CultureMiddleware(RequestDelegate next, RequestCultureProvider cultureProvider)
-        {
-            _next = next;
-            _cultureProvider = cultureProvider;
-        }
-
-        public async Task InvokeAsync(HttpContext context)
-        {
-            var culture = _cultureProvider.DetermineRequestCulture(context);
-            CultureInfo.CurrentCulture = culture;
-            CultureInfo.CurrentUICulture = culture;
-
-            await _next(context);
-        }
-    }
-
     public class RequestCultureProvider
     {
         private readonly ILogger<RequestCultureProvider> _logger;
@@ -36,40 +15,44 @@ namespace Relay.Middlewares
 
         public CultureInfo DetermineRequestCulture(HttpContext context)
         {
-            var cultureHeader = context.Request.Headers["Accept-Language"].ToString();
-
-            if (string.IsNullOrEmpty(cultureHeader))
+            var langQuery = context.Request.Query["lang"].ToString();
+            if (!string.IsNullOrEmpty(langQuery))
             {
-                _logger.LogInformation("Заголовок 'Accept-Language' не найден. Установлена культура по умолчанию: 'ru'.");
-                return new CultureInfo("ru");
+                // Проверка на допустимость культуры
+                if (IsCultureValid(langQuery))
+                {
+                    return new CultureInfo(langQuery);
+                }
+                else
+                {
+                    // Логгирование недопустимого языка
+                    _logger.LogWarning($"Запрашиваемая культура недействительна: {langQuery}. Устанавливается культура по умолчанию 'ru'.");
+                }
             }
 
-            var cultures = cultureHeader.Split(',')
-                                        .Select(c => c.Trim().ToLowerInvariant())
-                                        .Distinct()
-                                        .ToList();
-
-            if (cultures.Any(c => c.StartsWith("ru")))
+            var acceptLanguage = context.Request.Headers["Accept-Language"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(acceptLanguage))
             {
-                _logger.LogInformation("Приоритетная культура выбрана: 'ru'.");
-                return new CultureInfo("ru");
+                var cultures = acceptLanguage.Split(',');
+                if (cultures.Length > 0)
+                {
+                    // Проверка на допустимость культуры
+                    if (IsCultureValid(cultures[0]))
+                    {
+                        return new CultureInfo(cultures[0]);
+                    }
+                }
             }
 
-            if (cultures.Any(c => c.StartsWith("en")))
-            {
-                _logger.LogInformation("Выбрана английская культура.");
-                return new CultureInfo("en");
-            }
-
-            _logger.LogWarning("Неподдерживаемый язык в запросе. Установлена культура по умолчанию: 'ru'.");
+            // По умолчанию возвращаем русский
             return new CultureInfo("ru");
         }
 
-        private bool IsValidCulture(string cultureName)
+        private bool IsCultureValid(string cultureName)
         {
             try
             {
-                _ = new CultureInfo(cultureName);
+                CultureInfo.GetCultureInfo(cultureName);
                 return true;
             }
             catch (CultureNotFoundException)
