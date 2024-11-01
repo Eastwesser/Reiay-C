@@ -1,70 +1,79 @@
-using System.Globalization; // Подключаем пространство имен для работы с культурами
-using Microsoft.AspNetCore.Http; // Подключаем пространство имен для работы с HTTP-контекстом
-using Microsoft.Extensions.Logging; // Подключаем пространство имен для логирования
+using System.Globalization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Relay.Middlewares
 {
-    // Middleware для определения культуры запроса на основе заголовка Accept-Language
-    public class RequestCultureProvider
+    public class CultureMiddleware
     {
-        private readonly ILogger<RequestCultureProvider> _logger; // Логгер для записи информации и предупреждений
+        private readonly RequestDelegate _next;
+        private readonly RequestCultureProvider _cultureProvider;
 
-        // Конструктор, принимающий логгер в качестве зависимости
-        public RequestCultureProvider(ILogger<RequestCultureProvider> logger)
+        public CultureMiddleware(RequestDelegate next, RequestCultureProvider cultureProvider)
         {
-            _logger = logger; // Инициализируем логгер
+            _next = next;
+            _cultureProvider = cultureProvider;
         }
 
-        // Метод для определения культуры запроса на основе заголовка Accept-Language
+        public async Task InvokeAsync(HttpContext context)
+        {
+            var culture = _cultureProvider.DetermineRequestCulture(context);
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = culture;
+
+            await _next(context);
+        }
+    }
+
+    public class RequestCultureProvider
+    {
+        private readonly ILogger<RequestCultureProvider> _logger;
+
+        public RequestCultureProvider(ILogger<RequestCultureProvider> logger)
+        {
+            _logger = logger;
+        }
+
         public CultureInfo DetermineRequestCulture(HttpContext context)
         {
-            // Получаем значение заголовка Accept-Language из запроса
             var cultureHeader = context.Request.Headers["Accept-Language"].ToString();
 
-            // Если заголовок не указан, возвращаем культуру по умолчанию ("ru")
             if (string.IsNullOrEmpty(cultureHeader))
             {
                 _logger.LogInformation("Заголовок 'Accept-Language' не найден. Установлена культура по умолчанию: 'ru'.");
                 return new CultureInfo("ru");
             }
 
-            // Разделяем заголовок по запятым и удаляем лишние пробелы
             var cultures = cultureHeader.Split(',')
-                                        .Select(c => c.Trim())
+                                        .Select(c => c.Trim().ToLowerInvariant())
+                                        .Distinct()
                                         .ToList();
 
-            // Если "ru" присутствует в предпочтениях, выбираем её
-            if (cultures.Contains("ru-RU") || cultures.Contains("ru"))
+            if (cultures.Any(c => c.StartsWith("ru")))
             {
                 _logger.LogInformation("Приоритетная культура выбрана: 'ru'.");
                 return new CultureInfo("ru");
             }
 
-            // Берём первую указанную культуру, если она не null и допустима
-            var primaryCulture = cultures.FirstOrDefault();
-            if (primaryCulture != null && IsValidCulture(primaryCulture))
+            if (cultures.Any(c => c.StartsWith("en")))
             {
-                _logger.LogInformation("Язык, указанный в запросе: {Culture}", primaryCulture);
-                return new CultureInfo(primaryCulture);
+                _logger.LogInformation("Выбрана английская культура.");
+                return new CultureInfo("en");
             }
 
-            // Если первая культура недопустима, возвращаем культуру по умолчанию "ru"
-            _logger.LogWarning("Неверный код языка в запросе: {Culture}. Установлена 'ru'", primaryCulture);
+            _logger.LogWarning("Неподдерживаемый язык в запросе. Установлена культура по умолчанию: 'ru'.");
             return new CultureInfo("ru");
         }
 
-        // Метод для проверки, является ли культура допустимой
         private bool IsValidCulture(string cultureName)
         {
             try
             {
-                // Пытаемся создать объект CultureInfo для указанной культуры
                 _ = new CultureInfo(cultureName);
-                return true; // Если успешно, возвращаем true
+                return true;
             }
             catch (CultureNotFoundException)
             {
-                // Если возникло исключение, возвращаем false
                 return false;
             }
         }

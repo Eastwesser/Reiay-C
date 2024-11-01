@@ -47,6 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Регистрация сервисов приложения
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddSingleton<RequestCultureProvider>();
 // (Добавьте другие сервисы здесь)
 
 // Добавление контроллеров и Swagger для документации API
@@ -71,6 +72,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<LocalizationMiddleware>(); // Промежуточное ПО для локализации
+app.UseMiddleware<CultureMiddleware>(); // ПО для локализации
 app.UseHttpsRedirection(); // Перенаправление HTTP на HTTPS
 app.UseRouting(); // Настройка маршрутизации запросов
 app.UseAuthentication(); // Подключение аутентификации
