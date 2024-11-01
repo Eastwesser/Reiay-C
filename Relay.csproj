@@ -3,9 +3,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
-    <NoWarn>$(NoWarn);NU1605</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <DisableImplicitMain>true</DisableImplicitMain>
+    <NoWarn>$(NoWarn);NU1605;CS7022</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
