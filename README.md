@@ -78,12 +78,12 @@ API-документация доступна по адресу http://localhost
 
 Приложение поддерживает автоматическую локализацию на основе заголовка Accept-Language. Для смены языка используйте параметр запроса lang
 (
-  
-  http://localhost:5119/api/messages?lang=ru для русского
+
+  http://localhost:5119/api/messages?lang=ru для русского языка
 
   или
 
-  http://localhost:5119/api/messages?lang=en для английского
+  http://localhost:5119/api/messages?lang=en для английского языка
 
 ).
 
